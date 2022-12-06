@@ -1,9 +1,8 @@
 package com.eddarmitage.advent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static com.eddarmitage.advent.FileReading.readFile;
 
 public class CalorieCounting {
     public static void main(String[] args) {
@@ -14,22 +13,19 @@ public class CalorieCounting {
 
     private static int calculateCaloriesCarriedByTopElves(Path inputFile, int numberOfTopElves) {
         FixedCapacityBiggestValuesBuffer<Integer> topElves = new FixedCapacityBiggestValuesBuffer<>(numberOfTopElves);
+        FileReading.CrazyFileReader reader = readFile(inputFile);
         int currentElfCalorieCount = 0;
 
-        try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
-            while (reader.ready()) {
-                String nextLine = reader.readLine();
+        while (reader.hasMoreInput()) {
+            String nextLine = reader.readLine();
 
-                if (nextLine.isBlank()) {
-                    topElves.offer(currentElfCalorieCount);
-                    currentElfCalorieCount = 0;
-                    continue;
-                }
-
-                currentElfCalorieCount += Integer.parseInt(nextLine);
+            if (nextLine.isBlank()) {
+                topElves.offer(currentElfCalorieCount);
+                currentElfCalorieCount = 0;
+                continue;
             }
-        } catch (IOException e) {
-            System.err.println("SadPanda: " + e);
+
+            currentElfCalorieCount += Integer.parseInt(nextLine);
         }
         return topElves.stream().mapToInt(i -> i).sum();
     }

@@ -1,13 +1,12 @@
 package com.eddarmitage.advent;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static com.eddarmitage.advent.FileReading.readFile;
 
 public class SupplyStacks {
 
@@ -18,23 +17,20 @@ public class SupplyStacks {
         List<String> preamble = new LinkedList<>();
         List<String> moveInstructions = new LinkedList<>();
 
-        try (BufferedReader reader = Files.newBufferedReader(inputFile)) {
-            boolean parsingPreamble = true;
-            while (reader.ready()) {
-                String line = reader.readLine();
-                if (line.isBlank()) {
-                    parsingPreamble = false;
-                    continue;
-                }
-
-                if (parsingPreamble) {
-                    preamble.add(line);
-                } else {
-                    moveInstructions.add(line);
-                }
+        FileReading.CrazyFileReader reader = readFile(inputFile);
+        boolean parsingPreamble = true;
+        while (reader.hasMoreInput()) {
+            String line = reader.readLine();
+            if (line.isBlank()) {
+                parsingPreamble = false;
+                continue;
             }
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            if (parsingPreamble) {
+                preamble.add(line);
+            } else {
+                moveInstructions.add(line);
+            }
         }
 
         for (CraneType crane : CraneType.values()) {
@@ -54,12 +50,7 @@ public class SupplyStacks {
         }
     }
 
-    private static class StackState {
-        private final List<Stack<Character>> stacks;
-
-        private StackState(List<Stack<Character>> stacks) {
-            this.stacks = stacks;
-        }
+    private record StackState(List<Stack<Character>> stacks) {
 
         private static StackState create(List<String> preamble) {
             Collections.reverse(preamble);
@@ -100,7 +91,7 @@ public class SupplyStacks {
                 for (int i = 0; i < quantity; i++) {
                     fakeStack.push(stacks.get(source).pop());
                 }
-                while(!fakeStack.isEmpty()) {
+                while (!fakeStack.isEmpty()) {
                     stacks.get(destination).push(fakeStack.pop());
                 }
             }

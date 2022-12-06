@@ -1,26 +1,15 @@
 package com.eddarmitage.advent;
 
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.stream.Stream;
+
+import static com.eddarmitage.advent.FileReading.streamFile;
 
 public class CampCleanup {
 
     public static void main(String[] args) {
         Path inputFile = Path.of(args[0]);
-        try (Stream<String> lines = Files.lines(inputFile)) {
-            System.out.println(lines.filter(CampCleanup::areaFullyContained).count());
-        } catch (IOException e) {
-            System.err.println("SadPanda: " + e);
-        }
-        try (Stream<String> lines = Files.lines(inputFile)) {
-            System.out.println(lines.filter(CampCleanup::areasOverlap).count());
-        } catch (IOException e) {
-            System.err.println("SadPanda: " + e);
-        }
-
-
+        System.out.println(streamFile(inputFile).filter(CampCleanup::areaFullyContained).count());
+        System.out.println(streamFile(inputFile).filter(CampCleanup::areasOverlap).count());
     }
 
     private static boolean areasOverlap(String input) {

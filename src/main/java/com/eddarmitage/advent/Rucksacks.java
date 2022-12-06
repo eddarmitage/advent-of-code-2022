@@ -8,6 +8,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static com.eddarmitage.advent.FileReading.streamFile;
+
 public class Rucksacks {
 
     public static void main(String[] args) {
@@ -18,14 +20,10 @@ public class Rucksacks {
     }
 
     private static void findIncorrectItems(Path inputFile) {
-        try (Stream<String> lines = Files.lines(inputFile)) {
-            int score = lines.map(Rucksacks::findItemInBothCompartments)
-                    .mapToInt(Rucksacks::calculatePriority)
-                    .sum();
-            System.out.println(score);
-        } catch (IOException e) {
-            System.err.println("SadPanda: " + e);
-        }
+        int score = streamFile(inputFile).map(Rucksacks::findItemInBothCompartments)
+                .mapToInt(Rucksacks::calculatePriority)
+                .sum();
+        System.out.println(score);
     }
 
     private static void findBadges(Path inputFile) {
