@@ -4,12 +4,27 @@ import java.nio.file.Path;
 
 import static com.eddarmitage.advent.FileReading.streamFile;
 
-public class CampCleanup {
+public class CampCleanupProblem implements Problem {
+    private final Path inputFile;
+
+    public CampCleanupProblem(Path inputFile) {
+        this.inputFile = inputFile;
+    }
+
+    @Override
+    public Long solvePartOne() {
+        return streamFile(inputFile).filter(CampCleanupProblem::areaFullyContained).count();
+    }
+
+    @Override
+    public Long solvePartTwo() {
+        return streamFile(inputFile).filter(CampCleanupProblem::areasOverlap).count();
+    }
 
     public static void main(String[] args) {
-        Path inputFile = Path.of(args[0]);
-        System.out.println(streamFile(inputFile).filter(CampCleanup::areaFullyContained).count());
-        System.out.println(streamFile(inputFile).filter(CampCleanup::areasOverlap).count());
+        Problem problem = new CampCleanupProblem(Path.of(args[0]));
+        System.out.println(problem.solvePartOne());
+        System.out.println(problem.solvePartTwo());
     }
 
     private static boolean areasOverlap(String input) {

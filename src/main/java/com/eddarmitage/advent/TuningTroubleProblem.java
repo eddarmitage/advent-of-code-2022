@@ -4,13 +4,28 @@ import java.nio.file.Path;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TuningTrouble {
+public class TuningTroubleProblem implements Problem {
+
+    private final String input;
+
+    public TuningTroubleProblem(Path inputFile) {
+        this.input = FileReading.readSingleLine(inputFile);
+    }
+
+    @Override
+    public Integer solvePartOne() {
+        return findEndOfFirstMarker(input, 4);
+    }
+
+    @Override
+    public Integer solvePartTwo() {
+        return findEndOfFirstMarker(input, 14);
+    }
 
     public static void main(String[] args) {
-        String input = FileReading.readSingleLine(Path.of(args[0]));
-
-        System.out.println(findEndOfFirstMarker(input, 4));
-        System.out.println(findEndOfFirstMarker(input, 14));
+        Problem problem = new TuningTroubleProblem(Path.of(args[0]));
+        System.out.println(problem.solvePartOne());
+        System.out.println(problem.solvePartTwo());
     }
 
     static int findEndOfFirstMarker(String input, int markerLength) {

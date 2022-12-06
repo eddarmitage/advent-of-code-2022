@@ -7,10 +7,57 @@ import java.util.stream.Stream;
 
 import static com.eddarmitage.advent.FileReading.streamFile;
 
-public class RockPaperScissors {
+public class RockPaperScissorsProblem implements Problem {
     private static final int WIN_SCORE = 6;
     private static final int LOSE_SCORE = 0;
     private static final int DRAW_SCORE = 3;
+
+    private static final Map<String, Integer> SCORES = new HashMap<>();
+
+    private static final Map<String, String> CHOSEN_SHAPES = new HashMap<>();
+
+    static {
+        {
+            for (FirstColumn o : FirstColumn.values()) {
+                for (SecondColumn y : SecondColumn.values()) {
+                    String key = String.format("%s %s", o.name(), y.name());
+                    SCORES.put(key, o.outcomeScore(y) + y.shapeScore);
+                    CHOSEN_SHAPES.put(key, String.format("%s %s", o.name(), y.requiredGuess(o)));
+                }
+            }
+
+        }
+    }
+
+    private final Path inputFile;
+
+    public RockPaperScissorsProblem(Path inputFile) {
+        this.inputFile = inputFile;
+    }
+
+    @Override
+    public Integer solvePartOne() {
+        return calculateScore(streamFile(inputFile));
+    }
+
+    @Override
+    public Integer solvePartTwo() {
+        return calculateUltraScore(streamFile(inputFile));
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new RockPaperScissorsProblem(Path.of(args[0]));
+        System.out.println(problem.solvePartOne());
+        System.out.println(problem.solvePartTwo());
+    }
+
+    static int calculateScore(Stream<String> lines) {
+        return lines.mapToInt(SCORES::get).sum();
+    }
+
+    static int calculateUltraScore(Stream<String> lines) {
+        return lines.map(CHOSEN_SHAPES::get).mapToInt(SCORES::get).sum();
+    }
 
     private enum FirstColumn {
         A {
@@ -87,36 +134,4 @@ public class RockPaperScissors {
 
         abstract SecondColumn requiredGuess(FirstColumn firstColumn);
     }
-
-    private static final Map<String, Integer> SCORES = new HashMap<>();
-    private static final Map<String, String> CHOSEN_SHAPES = new HashMap<>();
-
-    static {
-        {
-            for (FirstColumn o : FirstColumn.values()) {
-                for (SecondColumn y : SecondColumn.values()) {
-                    String key = String.format("%s %s", o.name(), y.name());
-                    SCORES.put(key, o.outcomeScore(y) + y.shapeScore);
-                    CHOSEN_SHAPES.put(key, String.format("%s %s", o.name(), y.requiredGuess(o)));
-                }
-            }
-
-        }
-    }
-
-    public static void main(String[] args) {
-        Path inputFile = Path.of(args[0]);
-
-        System.out.println(calculateScore(streamFile(inputFile)));
-        System.out.println(calculateUltraScore(streamFile(inputFile)));
-    }
-
-    static int calculateScore(Stream<String> lines) {
-        return lines.mapToInt(SCORES::get).sum();
-    }
-
-    static int calculateUltraScore(Stream<String> lines) {
-        return lines.map(CHOSEN_SHAPES::get).mapToInt(SCORES::get).sum();
-    }
-
 }

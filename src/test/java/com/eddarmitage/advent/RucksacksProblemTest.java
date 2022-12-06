@@ -1,16 +1,30 @@
 package com.eddarmitage.advent;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import static com.eddarmitage.advent.Rucksacks.calculatePriority;
-import static com.eddarmitage.advent.Rucksacks.findItemInBothCompartments;
+import static com.eddarmitage.advent.RucksacksProblem.calculatePriority;
+import static com.eddarmitage.advent.RucksacksProblem.findItemInBothCompartments;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class RucksacksTest {
+class RucksacksProblemTest {
+
+    Problem problem = new RucksacksProblem(Path.of("inputs/3-rucksacks"));
+
+    @Test
+    void solvePartOne() {
+        assertEquals(7863, problem.solvePartOne());
+    }
+
+    @Test
+    void solvePartTwo() {
+        assertEquals(2488, problem.solvePartTwo());
+    }
 
     @ParameterizedTest
     @MethodSource("findItemSource")

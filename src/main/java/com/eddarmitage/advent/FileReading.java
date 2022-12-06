@@ -16,16 +16,16 @@ public class FileReading {
     }
 
     static Stream<String> streamFile(Path inputFile) {
-        try (Stream<String> stream = Files.lines(inputFile)) {
-            return stream;
+        try {
+            return Files.lines(inputFile);
         } catch (IOException e) {
             throw new RuntimeException("Sad Panda :( ", e);
         }
     }
 
     static CrazyFileReader readFile(Path inputFile) {
-        try (BufferedReader reader = Files.newBufferedReader(inputFile)){
-            return new CrazyFileReader(reader);
+        try {
+            return new CrazyFileReader(Files.newBufferedReader(inputFile));
         } catch (IOException e) {
             throw new RuntimeException("Sad Panda :(", e);
         }

@@ -8,15 +8,14 @@ import java.util.stream.Collectors;
 
 import static com.eddarmitage.advent.FileReading.readFile;
 
-public class SupplyStacks {
+public class SupplyStacksProblem implements Problem {
 
     private static final Pattern MOVE_PATTERN = Pattern.compile("move (?<quantity>\\d+) from (?<source>\\d+) to (?<destination>\\d+)");
 
-    public static void main(String[] args) {
-        Path inputFile = Path.of(args[0]);
-        List<String> preamble = new LinkedList<>();
-        List<String> moveInstructions = new LinkedList<>();
+    private final List<String> preamble = new LinkedList<>();
+    private final List<String> moveInstructions = new LinkedList<>();
 
+    public SupplyStacksProblem(Path inputFile) {
         FileReading.CrazyFileReader reader = readFile(inputFile);
         boolean parsingPreamble = true;
         while (reader.hasMoreInput()) {
@@ -32,22 +31,38 @@ public class SupplyStacks {
                 moveInstructions.add(line);
             }
         }
+    }
 
-        for (CraneType crane : CraneType.values()) {
-            StackState stacks = StackState.create(new ArrayList<>(preamble));
+    @Override
+    public Object solvePartOne() {
+        return simulateMoves(CraneType.CRATEMOVER_9000);
+    }
 
-            for (String moveInstruction : moveInstructions) {
-                Matcher m = MOVE_PATTERN.matcher(moveInstruction);
-                if (m.matches()) {
-                    int quantity = Integer.parseInt(m.group("quantity"));
-                    int source = Integer.parseInt(m.group("source")) - 1;
-                    int destination = Integer.parseInt(m.group("destination")) - 1;
-                    stacks.move(crane, quantity, source, destination);
-                }
+    @Override
+    public Object solvePartTwo() {
+        return simulateMoves(CraneType.CRATEMOVER_9001);
+    }
+
+    private String simulateMoves(CraneType crane) {
+        StackState stacks = StackState.create(new ArrayList<>(preamble));
+
+        for (String moveInstruction : moveInstructions) {
+            Matcher m = MOVE_PATTERN.matcher(moveInstruction);
+            if (m.matches()) {
+                int quantity = Integer.parseInt(m.group("quantity"));
+                int source = Integer.parseInt(m.group("source")) - 1;
+                int destination = Integer.parseInt(m.group("destination")) - 1;
+                stacks.move(crane, quantity, source, destination);
             }
-
-            stacks.printTopCrates();
         }
+
+        return stacks.getTopCrates();
+    }
+
+    public static void main(String[] args) {
+        Problem problem = new SupplyStacksProblem(Path.of(args[0]));
+        System.out.println(problem.solvePartOne());
+        System.out.println(problem.solvePartTwo());
     }
 
     private record StackState(List<Stack<Character>> stacks) {
@@ -97,12 +112,11 @@ public class SupplyStacks {
             }
         }
 
-        private void printTopCrates() {
-            String crateSequence = stacks.stream()
+        private String getTopCrates() {
+            return stacks.stream()
                     .map(Stack::peek)
                     .map(Object::toString)
                     .collect(Collectors.joining());
-            System.out.println(crateSequence);
         }
     }
 
