@@ -1,4 +1,4 @@
-package com.eddarmitage.caloriecounting;
+package com.eddarmitage.advent;
 
 import java.util.Comparator;
 import java.util.SortedSet;
